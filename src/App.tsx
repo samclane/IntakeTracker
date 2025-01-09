@@ -32,7 +32,7 @@ import DrinkBarChart from "./components/DrinkBarChart";
 import { exportJSON, exportCSV } from "./utils/exportUtils";
 import { parseDrinksJSON, parseDrinksCSV } from "./utils/importUtils";
 import "./styles.css";
-import { getDrinks$, addDrink, deleteDrink } from "./store/drinksStore";
+import { getDrinks$, deleteDrink } from "./store/drinksStore";
 
 const App: FC = () => {
   const [mode, setMode] = useState<PaletteMode>("light");
@@ -78,8 +78,8 @@ const App: FC = () => {
     return () => sub.unsubscribe();
   }, []);
 
-  const handleAddDrink = (drink: Drink) => {
-    addDrink(drink);
+  const handleAddDrink = (newDrink: Drink) => {
+    setDrinks((prev) => [...prev, newDrink]);
   };
 
   const handleDeleteDrink = (id: number) => {

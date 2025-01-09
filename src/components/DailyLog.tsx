@@ -23,6 +23,19 @@ interface DailyLogProps {
 }
 
 const DailyLog: FC<DailyLogProps> = ({ drinks, onDelete }) => {
+  const [removingId, setRemovingId] = React.useState<number | null>(null);
+
+  const handleRemove = (id: number) => {
+    setRemovingId(id);
+  };
+
+  const handleAnimationEnd = (id: number) => {
+    if (id === removingId) {
+      onDelete(id);
+      setRemovingId(null);
+    }
+  };
+
   const dailyDrinks =
     groupDrinksDaily(drinks)[new Date().toISOString().split("T")[0]] || [];
   // Summation of total pure alcohol in ml
@@ -56,8 +69,13 @@ const DailyLog: FC<DailyLogProps> = ({ drinks, onDelete }) => {
             <TableBody>
               {dailyDrinks.map((drink) => {
                 const pureAlc = (drink.volume * (drink.abv / 100)).toFixed(2);
+                const rowClass = drink.id === removingId ? "fade-out" : "fade-in";
                 return (
-                  <TableRow key={drink.id} className="fade-in">
+                  <TableRow
+                    key={drink.id}
+                    className={rowClass}
+                    onAnimationEnd={() => handleAnimationEnd(drink.id)}
+                  >
                     <TableCell>{drink.name}</TableCell>
                     <TableCell>{drink.volume.toFixed(2)}</TableCell>
                     <TableCell>{drink.abv}</TableCell>
@@ -65,7 +83,7 @@ const DailyLog: FC<DailyLogProps> = ({ drinks, onDelete }) => {
                     <TableCell align="center">
                       <IconButton
                         color="error"
-                        onClick={() => onDelete(drink.id)}
+                        onClick={() => handleRemove(drink.id)}
                         aria-label="delete"
                       >
                         <DeleteIcon />
