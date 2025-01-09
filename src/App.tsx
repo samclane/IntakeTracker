@@ -58,6 +58,15 @@ const App: FC = () => {
             paper: mode === "dark" ? "#1e1e1e" : "#fff",
           },
         },
+        components: {
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                transition: "all 0.3s ease-in-out",
+              },
+            },
+          },
+        },
       }),
     [mode]
   );

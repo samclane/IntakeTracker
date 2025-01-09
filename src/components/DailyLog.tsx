@@ -57,7 +57,7 @@ const DailyLog: FC<DailyLogProps> = ({ drinks, onDelete }) => {
               {dailyDrinks.map((drink) => {
                 const pureAlc = (drink.volume * (drink.abv / 100)).toFixed(2);
                 return (
-                  <TableRow key={drink.id}>
+                  <TableRow key={drink.id} className="fade-in">
                     <TableCell>{drink.name}</TableCell>
                     <TableCell>{drink.volume.toFixed(2)}</TableCell>
                     <TableCell>{drink.abv}</TableCell>
