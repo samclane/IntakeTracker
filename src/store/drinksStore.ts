@@ -1,6 +1,5 @@
-
 import { BehaviorSubject } from "rxjs";
-import { Drink } from "../types/Drink";
+import { Drink, FavoriteDrink } from "../types/Drink";
 
 const storedDrinks = localStorage.getItem("dailyDrinks");
 const initialDrinks: Drink[] = storedDrinks
@@ -8,6 +7,15 @@ const initialDrinks: Drink[] = storedDrinks
     : [];
 
 const drinksSubject = new BehaviorSubject<Drink[]>(initialDrinks);
+
+const storedFavorites = localStorage.getItem("favoriteDrinks");
+const initialFavorites: FavoriteDrink[] = storedFavorites ? JSON.parse(storedFavorites) : [];
+
+const favoriteDrinksSubject = new BehaviorSubject<FavoriteDrink[]>(initialFavorites);
+
+favoriteDrinksSubject.subscribe((favs) => {
+  localStorage.setItem("favoriteDrinks", JSON.stringify(favs));
+});
 
 // Persist changes to localStorage whenever drinks update
 drinksSubject.subscribe((drinks) => {
@@ -24,4 +32,13 @@ export const addDrink = (drink: Drink) => {
 export const deleteDrink = (id: number) => {
     const current = drinksSubject.value;
     drinksSubject.next(current.filter((d) => d.id !== id));
+};
+
+export const getFavoriteDrinks$ = () => favoriteDrinksSubject.asObservable();
+
+export const addFavoriteDrink = (fav: FavoriteDrink) => {
+  const current = favoriteDrinksSubject.value;
+  if (!current.find((f) => f.name === fav.name && f.volume === fav.volume && f.abv === fav.abv)) {
+    favoriteDrinksSubject.next([...current, fav]);
+  }
 };

@@ -4,4 +4,10 @@ export interface Drink {
   volume: number;
   abv: number;
   date: Date;
-}
+};
+
+export interface FavoriteDrink {
+  name: string;
+  volume: number;
+  abv: number;
+};

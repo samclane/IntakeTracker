@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, FC, useCallback } from "react";
-import { Drink } from "../types/Drink";
+import { Drink, FavoriteDrink } from "../types/Drink";
 import {
   Box,
   TextField,
@@ -8,11 +8,16 @@ import {
   Typography,
   FormControlLabel,
   Switch,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import convert, { Unit } from "convert-units";
 
 import MixedDrinkCalculator from "./MixedDrinkCalculator";
 import VolumeUnitSelect from "./VolumeUnitSelect"; // <-- import the new component
+import { getFavoriteDrinks$, addFavoriteDrink } from "../store/drinksStore";
 
 interface DrinkEntryFormProps {
   onAddDrink: (drink: Drink) => void;
@@ -30,6 +35,13 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
   // store final from MixedDrinkCalculator
   const [mixedCalculatedVolume, setMixedCalculatedVolume] = useState(0);
   const [mixedCalculatedAbv, setMixedCalculatedAbv] = useState(0);
+
+  const [favorites, setFavorites] = useState<FavoriteDrink[]>([]);
+
+  React.useEffect(() => {
+    const sub = getFavoriteDrinks$().subscribe((favs: FavoriteDrink[]) => setFavorites(favs));
+    return () => sub.unsubscribe();
+  }, []);
 
   const handleMixedChange = useCallback(
     (finalVol: number, finalAbv: number) => {
@@ -108,11 +120,51 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
     setMixedCalculatedAbv(0);
   };
 
+  const handleSaveAsFavorite = () => {
+    if (!name.trim() || !abv || !volume) return;
+    const rawVolume = parseFloat(volume);
+    const parsedAbv = parseFloat(abv);
+    if (isNaN(rawVolume) || rawVolume <= 0 || isNaN(parsedAbv) || parsedAbv <= 0) return;
+    addFavoriteDrink({ name, volume: rawVolume, abv: parsedAbv });
+  };
+
+  const handleFavoriteSelect = (fav: FavoriteDrink) => {
+    setName(fav.name);
+    setVolume(String(fav.volume));
+    setAbv(String(fav.abv));
+  };
+
   return (
     <Paper sx={{ p: 2, mb: 3 }} elevation={3}>
       <Typography variant="h6" gutterBottom>
         Log a New Drink
       </Typography>
+
+      {favorites.length > 0 && (
+        <Box sx={{ mb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+          <FormControl>
+            <InputLabel id="load-saved-drink">Load a Saved Drink</InputLabel>
+            <Select
+              labelId="load-saved-drink"
+              id="load-saved-drink-select"
+              value={""}
+              label="Load a Saved Drink"
+              onChange={(e) => {
+                const fav = favorites[parseInt(e.target.value)];
+                handleFavoriteSelect(fav);
+              }}
+            >
+              {favorites.map((f, idx) => (
+                <MenuItem key={idx} value={idx}>
+                  {f.name} ({f.volume}ml @ {f.abv}%)
+                </MenuItem>
+              ))}
+
+            </Select>
+          </FormControl>
+        </Box>
+
+      )}
 
       <Box
         component="form"
@@ -177,6 +229,10 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
         {/* SUBMIT */}
         <Button type="submit" variant="contained" color="primary">
           Add Drink
+        </Button>
+
+        <Button onClick={handleSaveAsFavorite} variant="outlined">
+          Save As Favorite
         </Button>
       </Box>
     </Paper>
