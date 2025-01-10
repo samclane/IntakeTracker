@@ -37,11 +37,9 @@ const MultiDayLog: FC<MultiDayLogProps> = ({
     }
   };
 
-  // 1) Group by date
   const grouped = groupDrinksDaily(drinks);
 
-  // 2) Sort dates if you want them in ascending or descending order
-  const allDates = Object.keys(grouped).sort(); // ascending order
+  const allDates = Object.keys(grouped).sort();
 
   // If we have optional filters, we can slice the array of dates accordingly
   const filteredDates = allDates.filter((dateStr) => {

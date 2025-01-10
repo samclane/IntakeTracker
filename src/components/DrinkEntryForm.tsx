@@ -17,7 +17,7 @@ import {
 import convert, { Unit } from "convert-units";
 
 import MixedDrinkCalculator from "./MixedDrinkCalculator";
-import VolumeUnitSelect from "./VolumeUnitSelect"; // <-- import the new component
+import VolumeUnitSelect from "./VolumeUnitSelect";
 import { getFavoriteDrinks$, addFavoriteDrink } from "../store/drinksStore";
 
 interface DrinkEntryFormProps {
@@ -130,7 +130,6 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
 
     const q = parseInt(quantity) || 1;
     for (let i = 0; i < q; i++) {
-      // Build the new drink object
       const newDrink: Drink = {
         id: Date.now() + i,
         name,
@@ -142,7 +141,10 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
       onAddDrink(newDrink);
     }
 
-    // Reset form fields
+    resetForm();
+  };
+
+  const resetForm = () => {
     setName("");
     setVolume("");
     setAbv("");
