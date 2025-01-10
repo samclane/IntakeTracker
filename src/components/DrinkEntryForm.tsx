@@ -28,6 +28,7 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
   const [volume, setVolume] = useState("");
   const [unit, setUnit] = useState("ml"); // default to ml
   const [abv, setAbv] = useState("");
+  const [quantity, setQuantity] = useState("1");
 
   // Mixed drink toggle
   const [isMixedDrink, setIsMixedDrink] = useState(false);
@@ -99,16 +100,19 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
       finalAbv = parsedAbv;
     }
 
-    // Build the new drink object
-    const newDrink: Drink = {
-      id: Date.now(),
-      name,
-      volume: finalVol,
-      abv: finalAbv,
-      date: new Date(),
-    };
+    const q = parseInt(quantity) || 1;
+    for (let i = 0; i < q; i++) {
+      // Build the new drink object
+      const newDrink: Drink = {
+        id: Date.now() + i,
+        name,
+        volume: finalVol,
+        abv: finalAbv,
+        date: new Date(),
+      };
 
-    onAddDrink(newDrink);
+      onAddDrink(newDrink);
+    }
 
     // Reset form fields
     setName("");
@@ -118,6 +122,7 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
     setIsMixedDrink(false);
     setMixedCalculatedVolume(0);
     setMixedCalculatedAbv(0);
+    setQuantity("1");
   };
 
   const handleSaveAsFavorite = () => {
@@ -225,6 +230,15 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
             />
           </Box>
         )}
+
+        <TextField
+          label="Quantity"
+          variant="outlined"
+          type="number"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          required
+        />
 
         {/* SUBMIT */}
         <Button type="submit" variant="contained" color="primary">
