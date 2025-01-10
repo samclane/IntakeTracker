@@ -12,6 +12,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Alert,
 } from "@mui/material";
 import convert, { Unit } from "convert-units";
 
@@ -39,6 +40,8 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
 
   const [favorites, setFavorites] = useState<FavoriteDrink[]>([]);
 
+  const [error, setError] = useState("");
+
   React.useEffect(() => {
     const sub = getFavoriteDrinks$().subscribe((favs: FavoriteDrink[]) => setFavorites(favs));
     return () => sub.unsubscribe();
@@ -54,9 +57,34 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
 
-    // We always need a drink name
-    if (!name.trim()) return;
+    // Validate name
+    if (!name.trim()) {
+      setError("Name is required");
+      return;
+    }
+
+    // Validate quantity
+    const parsedQuantity = parseInt(quantity);
+    if (parsedQuantity < 1) {
+      setError("Quantity must be greater than 0");
+      return;
+    }
+
+    // Validate volume
+    const rawVolume = parseFloat(volume);
+    if (isNaN(rawVolume) || rawVolume <= 0) {
+      setError("Volume must be greater than 0");
+      return;
+    }
+
+    // Validate ABV
+    const parsedAbv = parseFloat(abv);
+    if (isNaN(parsedAbv) || parsedAbv <= 0) {
+      setError("ABV must be greater than 0");
+      return;
+    }
 
     let finalVol = 0;
     let finalAbv = 0;
@@ -239,6 +267,8 @@ const DrinkEntryForm: FC<DrinkEntryFormProps> = ({ onAddDrink }) => {
           onChange={(e) => setQuantity(e.target.value)}
           required
         />
+
+        {error && <Alert severity="error">{error}</Alert>}
 
         {/* SUBMIT */}
         <Button type="submit" variant="contained" color="primary">
