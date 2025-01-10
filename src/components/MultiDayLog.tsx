@@ -3,19 +3,13 @@ import { Drink } from "../types/Drink";
 
 import {
   Paper,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+
   Typography,
-  IconButton,
   Box,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import { groupDrinksDaily } from "../utils/groupDrinks";
+import DrinkTable from "./DrinkTable";
 
 interface MultiDayLogProps {
   drinks: Drink[];
@@ -30,6 +24,19 @@ const MultiDayLog: FC<MultiDayLogProps> = ({
   startDate,
   endDate,
 }) => {
+  const [removingId, setRemovingId] = React.useState<number | null>(null);
+
+  const handleRemove = (id: number) => {
+    setRemovingId(id);
+  };
+
+  const handleAnimationEnd = (id: number) => {
+    if (id === removingId) {
+      onDelete(id);
+      setRemovingId(null);
+    }
+  };
+
   // 1) Group by date
   const grouped = groupDrinksDaily(drinks);
 
@@ -79,44 +86,12 @@ const MultiDayLog: FC<MultiDayLogProps> = ({
                   No drinks logged for {dateStr}.
                 </Typography>
               ) : (
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Drink</TableCell>
-                        <TableCell>Volume (ml)</TableCell>
-                        <TableCell>ABV (%)</TableCell>
-                        <TableCell>Pure Alcohol (ml)</TableCell>
-                        <TableCell align="center">Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {dayDrinks.map((drink) => {
-                        const pureAlc = (
-                          drink.volume *
-                          (drink.abv / 100)
-                        ).toFixed(2);
-                        return (
-                          <TableRow key={drink.id}>
-                            <TableCell>{drink.name}</TableCell>
-                            <TableCell>{drink.volume.toFixed(2)}</TableCell>
-                            <TableCell>{drink.abv}</TableCell>
-                            <TableCell>{pureAlc}</TableCell>
-                            <TableCell align="center">
-                              <IconButton
-                                color="error"
-                                onClick={() => onDelete(drink.id)}
-                                aria-label="delete"
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <DrinkTable
+                  drinks={dayDrinks}
+                  removingId={removingId}
+                  onRemove={handleRemove}
+                  onAnimationEnd={handleAnimationEnd}
+                />
               )}
 
               <Box mt={2}>
