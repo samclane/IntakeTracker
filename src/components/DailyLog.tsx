@@ -19,6 +19,7 @@ const DailyLog: FC<DailyLogProps> = ({ drinks, onDelete }) => {
   const [removingId, setRemovingId] = React.useState<number | null>(null);
 
   const handleRemove = (id: number) => {
+    onDelete(id);
     setRemovingId(id);
   };
 

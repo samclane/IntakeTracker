@@ -1,4 +1,3 @@
-
 import React, { FC } from "react";
 import { Drink } from "../types/Drink";
 import {
@@ -46,13 +45,15 @@ const DrinkTable: FC<DrinkTableProps> = ({
                                 key={drink.id}
                                 className={rowClass}
                                 onAnimationEnd={() => onAnimationEnd(drink.id)}
+                                data-cy="drink-row"
                             >
-                                <TableCell>{drink.name}</TableCell>
-                                <TableCell>{drink.volume.toFixed(2)}</TableCell>
-                                <TableCell>{drink.abv}</TableCell>
-                                <TableCell>{pureAlc}</TableCell>
-                                <TableCell align="center">
+                                <TableCell data-cy="drink-name">{drink.name}</TableCell>
+                                <TableCell data-cy="drink-volume">{drink.volume.toFixed(2)}</TableCell>
+                                <TableCell data-cy="drink-abv">{drink.abv}</TableCell>
+                                <TableCell data-cy="drink-pure-alcohol">{pureAlc}</TableCell>
+                                <TableCell data-cy="drink-actions" align="center">
                                     <IconButton
+                                        data-cy="delete-button"
                                         color="error"
                                         onClick={() => onRemove(drink.id)}
                                         aria-label="delete"
