@@ -14,14 +14,14 @@ describe('<DailyLog />', () => {
     cy.contains('No drinks logged yet.').should('exist')
   })
 
-  it('displays the correct total of pure alcohol', () => {
+  it('calculates total alcohol correctly', () => {
     const testDrinks = [
       { id: 1, name: 'Beer', volume: 500, abv: 5, date: new Date() },
       { id: 2, name: 'Wine', volume: 200, abv: 12, date: new Date() }
     ]
+    const expectedTotal = testDrinks.reduce((sum, drink) => sum + (drink.volume * drink.abv / 100), 0)
     cy.mount(<DailyLog drinks={testDrinks} onDelete={cy.spy()} />)
-    cy.contains('Today\'s Log').should('exist')
-    cy.contains('Total Pure Alcohol (ml): 49.00').should('exist')
+    cy.contains(`Total Pure Alcohol (ml): ${expectedTotal.toFixed(2)}`).should('exist')
   })
 
   it('removes a drink when delete is confirmed', () => {
@@ -29,6 +29,8 @@ describe('<DailyLog />', () => {
     const testDrinks = [{ id: 1, name: 'Test Drink', volume: 250, abv: 10, date: new Date() }]
     cy.mount(<DailyLog drinks={testDrinks} onDelete={onDeleteStub} />)
     cy.contains('Test Drink').should('exist')
+    const expectedTotal = testDrinks[0].volume * testDrinks[0].abv / 100
+    cy.contains(`Total Pure Alcohol (ml): ${expectedTotal.toFixed(2)}`).should('exist')
     cy.get('button').click()
     cy.wrap(onDeleteStub).should('have.been.calledWith', 1)
   })
