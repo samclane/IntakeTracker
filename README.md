@@ -2,6 +2,8 @@
 
 This is a simple application that tracks the amount of alcohol consumed by a user.
 
+![screenshot](./screenshot.png)
+
 ## Features
 
 - Calculate mixed drink ABV
