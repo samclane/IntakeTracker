@@ -1,12 +1,12 @@
 import React from 'react'
 import DrinkTable from './DrinkTable'
 
-const drinks = require('../../cypress/fixtures/example')
+import { drinks } from '../../cypress/fixtures/example'
 
 describe('<DrinkTable />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.mount(<DrinkTable drinks={drinks} />)
+    cy.mount(<DrinkTable drinks={drinks} removingId={null} onAnimationEnd={() => { }} onRemove={() => { }} />)
   })
 
   it('displays all drinks correctly', () => {

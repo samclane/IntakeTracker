@@ -1,13 +1,12 @@
 import React from 'react'
 import DailyLog from './DailyLog'
-import { Drink } from '../types/Drink'
+import { drinks } from '../../cypress/fixtures/example'
 
-const drinks = require('../../cypress/fixtures/example')
 
 describe('<DailyLog />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.mount(<DailyLog drinks={drinks}/>)
+    cy.mount(<DailyLog drinks={drinks} onDelete={() => { }} />)
   })
 
   it('shows a message if no drinks are provided', () => {

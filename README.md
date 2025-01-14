@@ -1,5 +1,5 @@
 # Alcohol Tracker
- 
+
 This is a simple application that tracks the amount of alcohol consumed by a user.
 
 ## Features
@@ -11,7 +11,7 @@ This is a simple application that tracks the amount of alcohol consumed by a use
 - Favorite system for recurring drinks
 - Import/Export data
   - JSON
-  - CSV 
+  - CSV
 - Data persistence
   - Local Storage for security/privacy
 
